@@ -4,10 +4,10 @@
  * @Author: 
  * @Date: 2019-11-27 14:35:11
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-06-03 22:15:43
+ * @LastEditTime: 2020-06-07 16:24:20
  */
 import axios from "axios";
-const host = process.env.NODE_ENV === 'production' ? `http://127.0.0.1:8020/` : 'http://127.0.0.1:8020/'  //本地调试时 
+const host = '/'
 axios.interceptors.request.use(config => {
     return config
 }, () => {
@@ -21,12 +21,6 @@ function $http({ url, data, method = 'get', success }) {
     var params = method.toUpperCase() == 'GET' ? data : {}
     sessionStorage.host = host
     // 统一参数
-    data.ip = ""
-    data.timestamp = ''
-    data.useragent = ''
-    data.auth = ''
-    data.userid = sessionStorage.userid
-    data.structid = sessionStorage.structid
     return new Promise((resolve, reject) => {
         axios({
             url: host + url,
@@ -38,8 +32,8 @@ function $http({ url, data, method = 'get', success }) {
                 'Content-Type': 'application/json'
             }
         }).then((response) => {
-            if (response.data.status !== 0 && response.data.status != 999 && url !=='patientpayment/' && url!=='queryrefundamount/') {
-                this.$alert(`${response.data.errordesc}`, '警告',{
+            if (response.data.status !== 200 && response.data.status != 999 && url !=='patientpayment/' && url!=='queryrefundamount/') {
+                this.$alert(`${response.data.msg}`, '警告',{
                     type: 'warning'
                 })
             }
