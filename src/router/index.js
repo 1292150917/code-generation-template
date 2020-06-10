@@ -19,17 +19,16 @@ const routes = [{
 	children: [{
 		path: '/homePage',
 		component: () => import('@/views/homePage')
-	}, {
+	},{
+		path: '/TheInterfaceToGenerate',
+		component: () => import('@/views/TheInterfaceToGenerate')
+	},  {
 		path: '/databaseCreate',
 		component: () => import('@/views/databaseCreate')
 	},
 	{
 		path: '/database',
 		component: () => import('@/views/database')
-	},
-	{
-		path: '/construction',
-		component: () => import('@/views/construction')
 	},
 	{
 		path: '/constructionedit',

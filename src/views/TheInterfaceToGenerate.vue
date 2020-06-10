@@ -8,7 +8,6 @@
 --> 
 <template>
   <div class="about">
-    <el-button type="primary" class="addxinz" @click="add">新增表</el-button>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -22,13 +21,15 @@
       </el-table-column>
       <el-table-column prop="name" label="表名称" width="120"></el-table-column>
       <el-table-column prop="address" label="表描述" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="address" label="实体" show-overflow-tooltip></el-table-column>
       <el-table-column prop="name" label="创建时间" width="120"></el-table-column>
       <el-table-column prop="name" label="更新时间" width="120"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">预览</el-button>
           <el-button size="mini" @click="tableUpdate(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">字段编辑</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">生成代码</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -112,9 +113,6 @@ export default {
         this.table();
         this.dialogVisible = false;
       }
-    },
-    add() {
-      this.dialogVisible = true;
     },
     handleEdit(index, item) {
       this.$router.push({ path: "/constructionedit?name=" + item.name });

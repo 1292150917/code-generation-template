@@ -8,7 +8,7 @@
 --> 
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -17,12 +17,13 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
   color: #2c3e50;
-    background: #fff6f6;
-    height: 100vh;
-    width: 100vw;
+  background: #fff6f6;
+  height: 100vh;
+  width: 100vw;
 }
-*{
+* {
   margin: 0;
   padding: 0;
 }

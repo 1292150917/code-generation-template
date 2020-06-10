@@ -11,7 +11,7 @@
     <div>
       <el-menu
         :collapse="collapse"
-        default-active="2"
+        :default-active="defaultActive"
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
@@ -29,9 +29,9 @@
             <span>数据库操作</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item @click="routerLink('databaseCreate')" index="1-1">数据库连接</el-menu-item>
-            <el-menu-item @click="routerLink('construction')" index="1-2">数据库结构</el-menu-item>
-            <el-menu-item @click="routerLink('database')" index="1-3">数据库数据</el-menu-item>
+            <el-menu-item @click="routerLink('databaseCreate','数据库连接','1-1')" index="1-1">数据库连接</el-menu-item>
+            <el-menu-item @click="routerLink('constructionedit','数据库结构','1-2')" index="1-2">数据库结构</el-menu-item>
+            <el-menu-item @click="routerLink('database','数据库数据','1-3')" index="1-3">数据库数据</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-submenu index="2">
@@ -40,7 +40,10 @@
             <span>API操作</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="2-1">接口生成</el-menu-item>
+            <el-menu-item
+              index="2-1"
+              @click="routerLink('TheInterfaceToGenerate','接口生成','2-1')"
+            >接口生成</el-menu-item>
             <el-menu-item index="2-2">文档生成</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
@@ -95,12 +98,18 @@
         Dashboard
       </div>
       <div class="nav-biaoqian">
-        <el-tag class="biaqoian" closable type="warning">标签四</el-tag>
-        <el-tag class="biaqoian" closable type="warning">标签四</el-tag>
-        <el-tag class="biaqoian" closable type="warning">标签四</el-tag>
-        <el-tag class="biaqoian" closable type="warning">标签四</el-tag>
+        <el-tag
+          class="biaqoian"
+          closable
+          color="#fff"
+          @close="tagClose(index)"
+          :type="typeWarning(item)"
+          :key="index"
+          @click="routerLink(item.router,item.name,item.index)"
+          v-for="(item,index) in taglist"
+        >{{item.name}}</el-tag>
       </div>
-      <div style="padding: 16px">
+      <div class="routerView">
         <router-view></router-view>
       </div>
     </div>
@@ -112,24 +121,54 @@ export default {
   name: "sidebar",
   data() {
     return {
-      collapse: false
+      collapse: false,
+      defaultActive: "0",
+      taglist: []
     };
+  },
+  watch: {
+    taglist() {
+      sessionStorage.taglist = JSON.stringify(this.taglist);
+    }
   },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
+    tagClose(index) {
+      this.taglist.splice(index, 1);
+    },
+    typeWarning(item) {
+      if ("/" + item.router !== this.$route.path) {
+        return "warning";
+      }
+    },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
     },
-    routerLink(item) {
-      if(this.$route.path === `/${item}`){
-        return
+    routerLink(item, name, index) {
+      if (this.$route.path === `/${item}`) {
+        return;
       }
+      this.defaultActive = index;
+      var v = this.taglist.filter(s => s.name === name);
+      if (v.length === 0) {
+        this.taglist.push({
+          name: name,
+          router: item,
+          index
+        });
+      }
+      sessionStorage.defaultActive = index;
       this.$router.push({ path: item });
     }
   },
-  created() {},
+  created() {
+    if (sessionStorage.taglist) {
+      this.taglist = JSON.parse(sessionStorage.taglist);
+      this.defaultActive = sessionStorage.defaultActive;
+    }
+  },
   components: {}
 };
 </script>
@@ -144,6 +183,13 @@ export default {
     margin-bottom: 5px;
     margin-right: 8px;
   }
+}
+.routerView {
+  background: #fff;
+  height: calc(100vh - 135px);
+  margin: 10px;
+  padding: 16px;
+  padding-bottom: 0;
 }
 .nav-title {
   height: 50px;
