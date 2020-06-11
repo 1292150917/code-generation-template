@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-09 19:38:27
+ * @LastEditTime: 2020-06-11 22:26:40
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\router\index.js
@@ -19,10 +19,14 @@ const routes = [{
 	children: [{
 		path: '/homePage',
 		component: () => import('@/views/homePage')
-	},{
+	}, {
 		path: '/TheInterfaceToGenerate',
 		component: () => import('@/views/TheInterfaceToGenerate')
-	},  {
+	}, {
+		path: '/sql',
+		component: () => import('@/views/sql')
+	},
+	{
 		path: '/databaseCreate',
 		component: () => import('@/views/databaseCreate')
 	},

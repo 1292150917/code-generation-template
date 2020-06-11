@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-03 21:25:25
- * @LastEditTime: 2020-06-09 19:40:51
+ * @LastEditTime: 2020-06-11 23:14:25
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\app\src\views\Home.vue
@@ -19,7 +19,7 @@
         text-color="#fff"
         active-text-color="#ffd04b"
       >
-        <el-menu-item index="0">
+        <el-menu-item index="99" @click="routerLink('homePage','公告','99')">
           <i class="el-icon-menu"></i>
           <span slot="title">公告</span>
         </el-menu-item>
@@ -32,6 +32,7 @@
             <el-menu-item @click="routerLink('databaseCreate','数据库连接','1-1')" index="1-1">数据库连接</el-menu-item>
             <el-menu-item @click="routerLink('constructionedit','数据库结构','1-2')" index="1-2">数据库结构</el-menu-item>
             <el-menu-item @click="routerLink('database','数据库数据','1-3')" index="1-3">数据库数据</el-menu-item>
+            <!-- <el-menu-item @click="routerLink('sql','本地sql查询','1-4')" index="1-4">本地sql查询</el-menu-item> -->
           </el-menu-item-group>
         </el-submenu>
         <el-submenu index="2">

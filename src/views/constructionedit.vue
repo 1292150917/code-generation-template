@@ -178,20 +178,29 @@ export default {
       }
     },
     async dialogVisibleClick() {
+      if (!this.nameBiao) {
+        alert("请输入表名称！");
+      }
       if (this.update) {
-        var dataV = {
-          name: this.nameBiao,
-          yuanName: this.update.name
-        };
-        var httpDatas = await this.$http({
-          url: "tables/update",
-          data: dataV
+        this.$confirm("请谨慎编辑操作！", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(async () => {
+          var dataV = {
+            name: this.nameBiao,
+            yuanName: this.update.name
+          };
+          var httpDatas = await this.$http({
+            url: "tables/update",
+            data: dataV
+          });
+          if (httpDatas.status === 200) {
+            this.tablesSurface();
+            this.update = "";
+            this.dialogVisible = false;
+          }
         });
-        if (httpDatas.status === 200) {
-          this.tablesSurface();
-          this.update = "";
-          this.dialogVisible = false;
-        }
         return;
       }
       var data = {
@@ -341,6 +350,8 @@ export default {
 .constructionedit-right {
   width: calc(99% - 250px);
   margin-left: 1%;
+  height: 100%;
+  overflow: auto;
   background-color: #ffffff;
   float: left;
 }
