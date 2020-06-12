@@ -27,41 +27,41 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="Field" label="字段名">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.Field"></el-input>
+            <el-input :disabled="disabledMetd(scope.row)" v-model="scope.row.Field"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="address" label="字段描述" show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.Comment"></el-input>
+            <el-input :disabled="disabledMetd(scope.row)" v-model="scope.row.Comment"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="物理类型">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.Type" placeholder="请选择">
+            <el-select :disabled="disabledMetd(scope.row)" v-model="scope.row.Type" placeholder="请选择">
               <el-option v-for="item in PhysicalType" :key="item" :label="item" :value="item"></el-option>
             </el-select>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="长度">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.length"></el-input>
+            <el-input :disabled="disabledMetd(scope.row)" v-model="scope.row.length"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="不是null" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.Null"></el-checkbox>
+            <el-checkbox :disabled="disabledMetd(scope.row)" v-model="scope.row.Null"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="主键" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.Key"></el-checkbox>
+            <el-checkbox :disabled="disabledMetd(scope.row)" v-model="scope.row.Key"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="自动递增" width="50">
           <template slot-scope="scope">
             <el-checkbox
               v-model="scope.row.Extra"
-              :disabled="(!scope.row.Key || scope.row.Type !== 'int')"
+              :disabled="disabledExtra(scope.row)"
             ></el-checkbox>
           </template>
         </el-table-column>
@@ -72,17 +72,26 @@
         </el-table-column>
         <el-table-column prop="name" label="操作">
           <template slot-scope="scope">
-            <div v-if="!scope.row.add">
-              <el-button size="mini" @click="handleEditUpdate(scope.$index, scope.row)">确认修改</el-button>
-              <el-button size="mini" type="danger" @click="alterDelete(scope.$index, scope.row)">删除</el-button>
+            <div v-if="scope.row.Field !== 'id'">
+              <div v-if="!scope.row.add">
+                <el-button size="mini" @click="handleEditUpdate(scope.$index, scope.row)">确认修改</el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="alterDelete(scope.$index, scope.row)"
+                >删除</el-button>
+              </div>
+              <div v-else style="text-align: center;">
+                <el-button size="mini" @click="handleEditAdd(scope.$index, scope.row)">新增字段</el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="handleEditdelete(scope.$index, scope.row)"
+                >取消</el-button>
+              </div>
             </div>
-            <div v-if="scope.row.add" style="text-align: center;">
-              <el-button size="mini" @click="handleEditAdd(scope.$index, scope.row)">新增字段</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="handleEditdelete(scope.$index, scope.row)"
-              >取消</el-button>
+            <div v-else>
+              <span>基础结构拒绝修改</span>
             </div>
           </template>
         </el-table-column>
@@ -163,19 +172,39 @@ export default {
     }
   },
   methods: {
+    disabledMetd(item){
+      if(item.Field === 'id'){
+        return true
+      }else{
+        return false
+      }
+    },
+    disabledExtra(item){
+      if(this.disabledMetd(item)){
+        return true
+      }else{
+        return (!item.Key || item.Type !== 'int')
+      }
+    },
     async tableUpdate() {
       this.update = this.surfaceList[this.tagIndex];
       this.dialogVisible = true;
     },
     async handleDelete() {
-      var data = {
-        name: this.surfaceList[this.tagIndex].name
-      };
-      var httpData = await this.$http({ url: "tables/delete", data: data });
-      if (httpData.status === 200) {
-        this.tablesSurface();
-        this.dialogVisible = false;
-      }
+      this.$confirm("是否确认需要删除？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(async () => {
+        var data = {
+          name: this.surfaceList[this.tagIndex].name
+        };
+        var httpData = await this.$http({ url: "tables/delete", data: data });
+        if (httpData.status === 200) {
+          this.tablesSurface();
+          this.dialogVisible = false;
+        }
+      });
     },
     async dialogVisibleClick() {
       if (!this.nameBiao) {
@@ -263,6 +292,15 @@ export default {
       this.tables();
     },
     async handleEditAdd(index, item) {
+      if(!item.Field){
+        return this.$alert('请输入新增字段')
+      }
+      if(!item.Type){
+        return this.$alert('请选择物理类型')
+      }
+      if(!item.length){
+        return this.$alert('请输入长度')
+      }
       var data = this.handleEdittype(item);
       // 获取原主键
       var v = this.tablesList.filter(s => s.Key === "PRI");
