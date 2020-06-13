@@ -37,6 +37,10 @@ const routes = [{
 	{
 		path: '/constructionedit',
 		component: () => import('@/views/constructionedit')
+	},
+	{
+		path: '/TheInterToGnerateJSON',
+		component: () => import('@/views/TheInterToGnerateJSON')
 	}
 	]
 }]

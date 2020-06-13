@@ -1,13 +1,15 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-08 23:06:41
+ * @LastEditTime: 2020-06-13 21:49:09
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
 --> 
 <template>
   <div class="about">
+    <el-button size="small" type="primary" @click="dialogVisibleClick">生成可部署项目</el-button>
+    <el-button size="small" type="primary" @click="dialogVisibleClick">生成选中局部代码</el-button>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -74,8 +76,8 @@ export default {
       this.multipleSelection = val;
     },
     async tableUpdate(_, item) {
-      this.update = item;
-      this.dialogVisible = true;
+      this.$root.TheInterToGnerateJSON = item
+      this.$router.push({path:"/TheInterToGnerateJSON"})
     },
     handleClose() {},
     async dialogVisibleClick() {
