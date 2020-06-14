@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-03 21:25:25
- * @LastEditTime: 2020-06-11 22:23:10
+ * @LastEditTime: 2020-06-14 20:52:48
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\app\src\App.vue
@@ -59,4 +59,8 @@
     }
   }
 }
+body .hljs{
+  background: #f8f8f8;
+}
+
 </style>

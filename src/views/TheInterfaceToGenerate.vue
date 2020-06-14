@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-13 21:49:09
+ * @LastEditTime: 2020-06-14 20:47:56
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -10,6 +10,12 @@
   <div class="about">
     <el-button size="small" type="primary" @click="dialogVisibleClick">生成可部署项目</el-button>
     <el-button size="small" type="primary" @click="dialogVisibleClick">生成选中局部代码</el-button>
+    <div class="ORMSELECT">
+      选择ORM：
+      <el-select size="small" v-model="ormvalue" placeholder="请选择">
+        <el-option v-for="item in ORMlist" :key="item" :label="item" :value="item"></el-option>
+      </el-select>
+    </div>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -30,11 +36,36 @@
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">预览</el-button>
           <el-button size="mini" @click="tableUpdate(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="danger">删除</el-button>
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">生成代码</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <!-- 预览代码 -->
+    <el-dialog
+      :visible.sync="previewhtml"
+      custom-class="previewhtml_dialog"
+      width="80%"
+      :before-close="handleClose"
+    >
+      <div class="previewhtml">
+        <div class="previewhtml-tag">
+          <span
+            :key="index"
+            :class="tagIndex === index ? 'TagSelect' : ''"
+            v-for="(item,index) in createList"
+            @click="tagIndex = index"
+          >{{item.name}}</span>
+        </div>
+        <template v-for="(item,index) in createList">
+          <div v-if="tagIndex === index" :key="index">
+            <pre class="previewhtml-main hljs">
+              <code v-html="item.msg" class="javascript"></code>
+            </pre>
+          </div>
+        </template>
+      </div>
+    </el-dialog>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
       <div>
         <div class="demo-input-suffix">
@@ -55,10 +86,39 @@
 </template>
 
 <script>
+import hljs from "highlight.js";
 export default {
   name: "App",
   data() {
     return {
+      createList: [],
+      ormvalue: "sequelize",
+      previewhtml: false,
+      tagIndex: "",
+      ORMlist: ["sequelize"],
+      options: [
+        {
+          value: "选项1",
+          label: "黄金糕"
+        },
+        {
+          value: "选项2",
+          label: "双皮奶"
+        },
+        {
+          value: "选项3",
+          label: "蚵仔煎"
+        },
+        {
+          value: "选项4",
+          label: "龙须面"
+        },
+        {
+          value: "选项5",
+          label: "北京烤鸭"
+        }
+      ],
+      value: "",
       dialogVisible: false,
       describe: "",
       input: "",
@@ -68,6 +128,14 @@ export default {
       tableData: []
     };
   },
+  watch: {
+    tagIndex() {
+      this.$nextTick(() => {
+        var pre = document.querySelector(".previewhtml-main");
+        hljs.highlightBlock(pre);
+      });
+    }
+  },
   methods: {
     handleClick(row) {
       console.log(row);
@@ -76,10 +144,12 @@ export default {
       this.multipleSelection = val;
     },
     async tableUpdate(_, item) {
-      this.$root.TheInterToGnerateJSON = item
-      this.$router.push({path:"/TheInterToGnerateJSON"})
+      this.$root.TheInterToGnerateJSON = item;
+      this.$router.push({ path: "/TheInterToGnerateJSON" });
     },
-    handleClose() {},
+    handleClose() {
+      this.previewhtml = false;
+    },
     async dialogVisibleClick() {
       if (this.update) {
         var dataV = {
@@ -106,18 +176,21 @@ export default {
         this.dialogVisible = false;
       }
     },
-    async handleDelete(res) {
-      var data = {
-        name: this.tableData[res].name
-      };
-      var httpData = await this.$http({ url: "tables/delete", data: data });
-      if (httpData.status === 200) {
-        this.table();
-        this.dialogVisible = false;
-      }
-    },
-    handleEdit(index, item) {
-      this.$router.push({ path: "/constructionedit?name=" + item.name });
+    handleEdit(_, item) {
+      this.$http({
+        url: "generate/create",
+        method: "post",
+        data: {
+          name: item.name,
+          ORM: this.ormvalue
+        }
+      }).then(s => {
+        if (s.status === 200) {
+          this.createList = s.msg;
+          this.tagIndex = 0;
+          this.previewhtml = true;
+        }
+      });
     },
     async table() {
       var list = await this.$http({ url: "tables/surface", data: {} });
@@ -129,8 +202,49 @@ export default {
   }
 };
 </script>
-
+<style lang="scss">
+.previewhtml_dialog {
+  background: #f8f8f8;
+  height: calc(92% - 54px);
+  overflow: auto;
+  margin-top: 54px !important;
+  box-shadow: 1px 1px 50px rgba(0, 0, 0, 0.4);
+  .TagSelect {
+    background: #fff;
+  }
+  .el-dialog__body {
+    height: 97%;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .el-dialog__header {
+    padding-top: 0;
+  }
+}
+.previewhtml > div:nth-of-type(2) {
+  height: calc(100% - 64px);
+  overflow: auto;
+}
+</style>
 <style lang="scss" scoped="scoped">
+.previewhtml {
+  height: 100%;
+}
+.previewhtml-tag {
+  border-bottom: 1px solid #eee;
+  span {
+    padding: 0px 15px;
+    display: inline-block;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+  }
+}
+.ORMSELECT {
+  color: #999;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 .marg {
   margin-bottom: 10px;
 }

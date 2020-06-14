@@ -147,6 +147,11 @@ export default {
           datalist: this.tableData,
           name: this.$root.TheInterToGnerateJSON.name
         }
+      }).then(s => {
+        if (s.status === 200) {
+          this.$router.go(-1);
+          return 
+        }
       });
     },
     handleSelectionChange() {}
