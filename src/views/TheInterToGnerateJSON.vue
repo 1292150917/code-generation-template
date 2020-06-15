@@ -50,6 +50,11 @@
             <el-checkbox v-model="scope.row.query"></el-checkbox>
           </template>
         </el-table-column>
+        <el-table-column prop="name" label="删除" width="50">
+          <template slot-scope="scope">
+            <el-checkbox v-model="scope.row.delete"></el-checkbox>
+          </template>
+        </el-table-column>
         <el-table-column prop="name" label="查询方式">
           <template slot-scope="scope">
             <el-select v-model="scope.row.inquirywayvalue" placeholder="请选择">
