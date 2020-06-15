@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-14 20:47:56
+ * @LastEditTime: 2020-06-15 22:00:15
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -9,7 +9,7 @@
 <template>
   <div class="about">
     <el-button size="small" type="primary" @click="dialogVisibleClick">生成可部署项目</el-button>
-    <el-button size="small" type="primary" @click="dialogVisibleClick">生成选中局部代码</el-button>
+    <el-button size="small" type="primary" @click="generateCreate">生成选中局部代码</el-button>
     <div class="ORMSELECT">
       选择ORM：
       <el-select size="small" v-model="ormvalue" placeholder="请选择">
@@ -37,7 +37,7 @@
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">预览</el-button>
           <el-button size="mini" @click="tableUpdate(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger">删除</el-button>
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">生成代码</el-button>
+          <el-button size="mini" @click="handleClick(scope.$index, scope.row)">生成代码</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -87,6 +87,8 @@
 
 <script>
 import hljs from "highlight.js";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 export default {
   name: "App",
   data() {
@@ -137,8 +139,47 @@ export default {
     }
   },
   methods: {
-    handleClick(row) {
-      console.log(row);
+    async handleClick(_, item) {
+      this.$http({
+        url: "generate/create",
+        method: "post",
+        data: {
+          name: [item.name],
+          ORM: this.ormvalue
+        }
+      }).then(async res => {
+        var zip = new JSZip();
+        for (var index in res.msg) {
+          zip.file(res.msg[index].name, res.msg[index].msg);
+          var s = await zip.generateAsync({ type: "blob" });
+        }
+        saveAs(s, item.name);
+      });
+    },
+    generateCreate() {
+      var name = [];
+      this.multipleSelection.forEach(s => {
+        name.push(s.name);
+      });
+      this.$http({
+        url: "generate/create",
+        method: "post",
+        data: {
+          name: name,
+          ORM: this.ormvalue
+        }
+      }).then(async res => {
+        var zip = new JSZip();
+        for (var index in res.msg) {
+          zip.file(res.msg[index].name, res.msg[index].msg);
+          var s = await zip.generateAsync({ type: "blob" });
+        }
+        if (name.length === 1) {
+          saveAs(s, name[0].name);
+        } else {
+          saveAs(s, "Dave_download");
+        }
+      });
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -181,7 +222,7 @@ export default {
         url: "generate/create",
         method: "post",
         data: {
-          name: item.name,
+          name: [item.name],
           ORM: this.ormvalue
         }
       }).then(s => {
