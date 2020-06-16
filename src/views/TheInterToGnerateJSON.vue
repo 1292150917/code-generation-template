@@ -82,7 +82,7 @@
       </el-table>
       <div class="but">
         <el-button size="small" type="primary" @click="add">保存</el-button>
-        <el-button size="small" type="primary">返回</el-button>
+        <el-button size="small" type="primary" @click="fanhuiClback">返回</el-button>
       </div>
     </div>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
@@ -155,9 +155,12 @@ export default {
       }).then(s => {
         if (s.status === 200) {
           this.$router.go(-1);
-          return 
+          return;
         }
       });
+    },
+    fanhuiClback() {
+      this.$router.go(-1);
     },
     handleSelectionChange() {}
   },
@@ -166,23 +169,15 @@ export default {
       this.$router.go(-1);
       return;
     }
-    var httpDatas = await this.$http({
-      url: "tables",
-      data: {}
-    });
-    this.tableData = httpDatas.data[this.$root.TheInterToGnerateJSON.name];
-    this.tableData.filter(s => {
-      if (s.Extra === "auto_increment") {
-        return;
+    // 回显当前
+    var generatequery = await this.$http({
+      url: "generate/query",
+      method:"post",
+      data: {
+        name: this.$root.TheInterToGnerateJSON.name
       }
-      s.attribute = s.Field;
-      s.add = true;
-      s.querylist = true;
-      s.inquirywayvalue = "=";
-      s.update = true;
-      s.query = true;
-      return s;
     });
+    this.tableData = generatequery.data
   }
 };
 </script>

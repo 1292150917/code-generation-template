@@ -1,14 +1,14 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-15 22:00:15
+ * @LastEditTime: 2020-06-16 23:49:11
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
 --> 
 <template>
   <div class="about">
-    <el-button size="small" type="primary" @click="dialogVisibleClick">生成可部署项目</el-button>
+    <el-button size="small" type="primary" @click="generateCreate(true)">生成可部署项目</el-button>
     <el-button size="small" type="primary" @click="generateCreate">生成选中局部代码</el-button>
     <div class="ORMSELECT">
       选择ORM：
@@ -36,7 +36,7 @@
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">预览</el-button>
           <el-button size="mini" @click="tableUpdate(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger">删除</el-button>
+          <el-button size="mini" type="danger" @click="deleteClick()">删除</el-button>
           <el-button size="mini" @click="handleClick(scope.$index, scope.row)">生成代码</el-button>
         </template>
       </el-table-column>
@@ -98,28 +98,6 @@ export default {
       previewhtml: false,
       tagIndex: "",
       ORMlist: ["sequelize"],
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
       value: "",
       dialogVisible: false,
       describe: "",
@@ -156,7 +134,7 @@ export default {
         saveAs(s, item.name);
       });
     },
-    generateCreate() {
+    generateCreate(deploy) {
       var name = [];
       this.multipleSelection.forEach(s => {
         name.push(s.name);
@@ -166,7 +144,8 @@ export default {
         method: "post",
         data: {
           name: name,
-          ORM: this.ormvalue
+          ORM: this.ormvalue,
+          deploy
         }
       }).then(async res => {
         var zip = new JSZip();
@@ -190,6 +169,9 @@ export default {
     },
     handleClose() {
       this.previewhtml = false;
+    },
+    deleteClick() {
+      this.$alert("删除");
     },
     async dialogVisibleClick() {
       if (this.update) {
