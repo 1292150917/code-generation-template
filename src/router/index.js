@@ -25,6 +25,9 @@ const routes = [{
 	}, {
 		path: '/sql',
 		component: () => import('@/views/sql')
+	}, {
+		path: '/documentgeneration',
+		component: () => import('@/views/documentgeneration')
 	},
 	{
 		path: '/databaseCreate',

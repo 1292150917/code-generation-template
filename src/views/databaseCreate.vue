@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-09 19:38:15
- * @LastEditTime: 2020-06-11 22:16:41
+ * @LastEditTime: 2020-06-17 23:20:51
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\databaseCreate.vue
@@ -64,6 +64,9 @@ export default {
       return true;
     },
     async cretedSubmit() {
+      if (window.location.href.includes("zzf")) {
+        return this.$alert("测试地址可直接操作数据库结构并且禁止重新链接");
+      }
       if (!this.verification()) {
         return;
       }
@@ -91,6 +94,9 @@ export default {
       });
     },
     async onSubmit() {
+      if (window.location.href.includes("zzf")) {
+        return this.$alert("测试地址可直接操作数据库结构并且禁止重新链接");
+      }
       if (!this.verification()) {
         return;
       }

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-03 21:25:25
- * @LastEditTime: 2020-06-11 23:14:25
+ * @LastEditTime: 2020-06-18 21:08:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\app\src\views\Home.vue
@@ -45,7 +45,7 @@
               index="2-1"
               @click="routerLink('TheInterfaceToGenerate','接口生成','2-1')"
             >接口生成</el-menu-item>
-            <el-menu-item index="2-2">文档生成</el-menu-item>
+            <el-menu-item index="2-2" @click="routerLink('documentgeneration','文档生成','2-2')">文档生成</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-submenu index="3">
@@ -54,7 +54,6 @@
             <span>高级用法</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="3-1">创建代码</el-menu-item>
             <el-menu-item index="3-2">代码关联</el-menu-item>
             <el-menu-item index="3-3">接口查看</el-menu-item>
             <el-menu-item index="3-4">路由配置</el-menu-item>

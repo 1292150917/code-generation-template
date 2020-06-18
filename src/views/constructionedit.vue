@@ -37,7 +37,11 @@
         </el-table-column>
         <el-table-column prop="name" label="物理类型">
           <template slot-scope="scope">
-            <el-select :disabled="disabledMetd(scope.row)" v-model="scope.row.Type" placeholder="请选择">
+            <el-select
+              :disabled="disabledMetd(scope.row)"
+              v-model="scope.row.Type"
+              placeholder="请选择"
+            >
               <el-option v-for="item in PhysicalType" :key="item" :label="item" :value="item"></el-option>
             </el-select>
           </template>
@@ -59,10 +63,7 @@
         </el-table-column>
         <el-table-column prop="name" label="自动递增" width="50">
           <template slot-scope="scope">
-            <el-checkbox
-              v-model="scope.row.Extra"
-              :disabled="disabledExtra(scope.row)"
-            ></el-checkbox>
+            <el-checkbox v-model="scope.row.Extra" :disabled="disabledExtra(scope.row)"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="默认值">
@@ -103,6 +104,10 @@
           <label for>表名称:</label>
           <el-input v-model="nameBiao" placeholder="请输入内容"></el-input>
         </div>
+        <div class="demo-input-suffix">
+          <label for>表描述:</label>
+          <el-input v-model="describe" placeholder="请输入内容"></el-input>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -121,6 +126,7 @@ export default {
       dialogVisible: false,
       PhysicalTypevalue: "",
       nameBiao: "",
+      describe: "",
       tablesList: [],
       inquirywayvalue: "",
       inquiryway: [
@@ -172,18 +178,18 @@ export default {
     }
   },
   methods: {
-    disabledMetd(item){
-      if(item.Field === 'id'){
-        return true
-      }else{
-        return false
+    disabledMetd(item) {
+      if (item.Field === "id") {
+        return true;
+      } else {
+        return false;
       }
     },
-    disabledExtra(item){
-      if(this.disabledMetd(item)){
-        return true
-      }else{
-        return (!item.Key || item.Type !== 'int')
+    disabledExtra(item) {
+      if (this.disabledMetd(item)) {
+        return true;
+      } else {
+        return !item.Key || item.Type !== "int";
       }
     },
     async tableUpdate() {
@@ -218,6 +224,7 @@ export default {
         }).then(async () => {
           var dataV = {
             name: this.nameBiao,
+            describe: this.describe,
             yuanName: this.update.name
           };
           var httpDatas = await this.$http({
@@ -233,6 +240,7 @@ export default {
         return;
       }
       var data = {
+        describe: this.describe,
         name: this.nameBiao
       };
       var httpData = await this.$http({ url: "tables/add", data: data });
@@ -292,14 +300,14 @@ export default {
       this.tables();
     },
     async handleEditAdd(index, item) {
-      if(!item.Field){
-        return this.$alert('请输入新增字段')
+      if (!item.Field) {
+        return this.$alert("请输入新增字段");
       }
-      if(!item.Type){
-        return this.$alert('请选择物理类型')
+      if (!item.Type) {
+        return this.$alert("请选择物理类型");
       }
-      if(!item.length){
-        return this.$alert('请输入长度')
+      if (!item.length) {
+        return this.$alert("请输入长度");
       }
       var data = this.handleEdittype(item);
       // 获取原主键

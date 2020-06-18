@@ -1,21 +1,14 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-18 20:57:41
+ * @LastEditTime: 2020-06-18 21:08:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
 --> 
 <template>
   <div class="about">
-    <el-button size="small" type="primary" @click="generateCreate(true)">生成可部署项目</el-button>
-    <el-button size="small" type="primary" @click="generateCreate">生成选中局部代码</el-button>
-    <div class="ORMSELECT">
-      选择ORM：
-      <el-select size="small" v-model="ormvalue" placeholder="请选择">
-        <el-option v-for="item in ORMlist" :key="item" :label="item" :value="item"></el-option>
-      </el-select>
-    </div>
+    <el-button size="small" type="primary" @click="generateCreate">生成选中文档</el-button>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -32,14 +25,12 @@
       <!-- <el-table-column prop="address" label="实体" show-overflow-tooltip></el-table-column> -->
       <el-table-column prop="msg.CREATE_TIME" label="创建时间"></el-table-column>
       <el-table-column prop="msg.UPDATE_TIME" label="更新时间"></el-table-column>
-      <el-table-column label="操作">
+      <!-- <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">预览</el-button>
           <el-button size="mini" @click="tableUpdate(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="deleteClick()">删除</el-button>
-          <el-button size="mini" @click="handleClick(scope.$index, scope.row)">生成代码</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <!-- 预览代码 -->
     <el-dialog
@@ -87,14 +78,11 @@
 
 <script>
 import hljs from "highlight.js";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
 export default {
   name: "App",
   data() {
     return {
       createList: [],
-      ormvalue: "sequelize",
       previewhtml: false,
       tagIndex: "",
       ORMlist: ["sequelize"],
@@ -117,47 +105,19 @@ export default {
     }
   },
   methods: {
-    async handleClick(_, item) {
-      this.$http({
-        url: "generate/create",
-        method: "post",
-        data: {
-          name: [item.name],
-          ORM: this.ormvalue
-        }
-      }).then(async res => {
-        var zip = new JSZip();
-        for (var index in res.msg) {
-          zip.file(res.msg[index].name, res.msg[index].msg);
-          var s = await zip.generateAsync({ type: "blob" });
-        }
-        saveAs(s, item.name);
-      });
-    },
-    generateCreate(deploy) {
+    generateCreate() {
       var name = [];
       this.multipleSelection.forEach(s => {
         name.push(s.name);
       });
       this.$http({
-        url: "generate/create",
+        url: "api/apiRender/render",
         method: "post",
         data: {
-          name: name,
-          ORM: this.ormvalue,
-          deploy
+          name: name
         }
       }).then(async res => {
-        var zip = new JSZip();
-        for (var index in res.msg) {
-          zip.file(res.msg[index].name, res.msg[index].msg);
-          var s = await zip.generateAsync({ type: "blob" });
-        }
-        if (name.length === 1) {
-          saveAs(s, name[0].name);
-        } else {
-          saveAs(s, "Dave_download");
-        }
+        console.log(res)
       });
     },
     handleSelectionChange(val) {
@@ -169,9 +129,6 @@ export default {
     },
     handleClose() {
       this.previewhtml = false;
-    },
-    deleteClick() {
-      this.$alert("该版本暂无法删除");
     },
     async dialogVisibleClick() {
       if (this.update) {
@@ -204,8 +161,7 @@ export default {
         url: "generate/create",
         method: "post",
         data: {
-          name: [item.name],
-          ORM: this.ormvalue
+          name: [item.name]
         }
       }).then(s => {
         if (s.status === 200) {
