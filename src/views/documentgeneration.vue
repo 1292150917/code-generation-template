@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-18 21:08:16
+ * @LastEditTime: 2020-06-19 22:55:12
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -30,7 +30,7 @@
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">预览</el-button>
           <el-button size="mini" @click="tableUpdate(scope.$index, scope.row)">编辑</el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>-->
     </el-table>
     <!-- 预览代码 -->
     <el-dialog
@@ -114,10 +114,10 @@ export default {
         url: "api/apiRender/render",
         method: "post",
         data: {
-          name: name
+          name: name 
         }
-      }).then(async res => {
-        console.log(res)
+      }).then(async () => {
+        window.open("/api/apiRender/download");
       });
     },
     handleSelectionChange(val) {

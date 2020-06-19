@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-18 20:57:41
+ * @LastEditTime: 2020-06-19 23:02:04
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -123,7 +123,8 @@ export default {
         method: "post",
         data: {
           name: [item.name],
-          ORM: this.ormvalue
+          ORM: this.ormvalue,
+          download:true
         }
       }).then(async res => {
         var zip = new JSZip();
@@ -145,6 +146,7 @@ export default {
         data: {
           name: name,
           ORM: this.ormvalue,
+          download:true,
           deploy
         }
       }).then(async res => {
