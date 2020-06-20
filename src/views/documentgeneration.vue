@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-20 11:10:58
+ * @LastEditTime: 2020-06-20 17:25:08
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -11,7 +11,8 @@
     <p style="
     color: #8066d6;
     font-size: 13px;
-    margin-bottom: 12px;">下载完成后请解压到您之前生成代码的apidoc文件夹，然后通过您的地址+/apidoc访问即可</p>
+    margin-bottom: 12px;">文档接口名字默认为表描述信息。如果需要修改请去《数据库操作=>数据库结构修改表描述》
+    <br/> 下载完成后请解压到您之前生成代码的apidoc文件夹，然后通过您的地址+/apidoc访问即可</p>
     <el-tooltip class="item" effect="dark" content="下载完成后请解压到代码public/apidoc/代码下" placement="top-start">
       <el-button size="small" type="primary" @click="generateCreate">生成选中文档</el-button>
     </el-tooltip>

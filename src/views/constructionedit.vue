@@ -98,7 +98,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title="提示" v-if="dialogVisible" :visible.sync="dialogVisible" width="30%">
       <div>
         <div class="demo-input-suffix">
           <label for>表名称:</label>
