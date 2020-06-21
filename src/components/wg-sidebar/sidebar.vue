@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-03 21:25:25
- * @LastEditTime: 2020-06-18 21:08:46
+ * @LastEditTime: 2020-06-21 17:34:50
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\app\src\views\Home.vue
@@ -54,11 +54,11 @@
             <span>高级用法</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="3-2">代码关联</el-menu-item>
-            <el-menu-item index="3-3">接口查看</el-menu-item>
-            <el-menu-item index="3-4">路由配置</el-menu-item>
-            <el-menu-item index="3-5">文档说明</el-menu-item>
-            <el-menu-item index="3-6">其他操作</el-menu-item>
+            <el-menu-item index="3-2" @click="routerLink('codeAssociated','代码关联','3-2')">代码关联</el-menu-item>
+            <el-menu-item index="3-3" @click="routerLink('InterfaceView','接口查看','3-3')">接口查看</el-menu-item>
+            <!-- <el-menu-item index="3-4">路由配置</el-menu-item> -->
+            <!-- <el-menu-item index="3-5" @click="dowcumentApi">文档说明</el-menu-item>
+            <el-menu-item index="3-6">其他操作</el-menu-item> -->
           </el-menu-item-group>
         </el-submenu>
         <el-menu-item index="4" disabled>
@@ -69,7 +69,7 @@
           <i class="el-icon-document"></i>
           <span slot="title">微信公众号专区</span>
         </el-menu-item>
-        <el-menu-item index="5">
+        <el-menu-item index="5" disabled>
           <i class="el-icon-setting"></i>
           <span slot="title">操作监控</span>
         </el-menu-item>
@@ -132,6 +132,10 @@ export default {
     }
   },
   methods: {
+    dowcumentApi() {
+      var URL = "file:///C:/Users/zhamgzifang/Desktop/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/public/apidoc/index.html";
+      window.open(URL, null);
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
@@ -189,6 +193,7 @@ export default {
   height: calc(100vh - 135px);
   margin: 10px;
   padding: 16px;
+  overflow: auto;
   padding-bottom: 0;
 }
 .nav-title {

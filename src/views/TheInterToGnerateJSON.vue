@@ -1,8 +1,20 @@
 <template>
   <div class="TheInterToGnerateJSON">
+    <el-form ref="form" label-width="80px" v-if="element">
+      <el-form-item label="活动区域">
+        <el-select size="small" v-model="selectValue" placeholder="请选择活动区域">
+          <el-option
+            :key="index"
+            v-for="(item,index) in selectList"
+            :label="item.name"
+            :value="item.name"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
     <div class="TheInterToGnerateJSON-main">
       <el-table
-        ref="multipleTable"
+        :ref="'multipleTable' + comIndex"
         :data="tableData"
         border
         tooltip-effect="dark"
@@ -27,37 +39,37 @@
         </el-table-column>
         <el-table-column prop="address" label="代码属性" show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.attribute"></el-input>
+            <el-input :disabled="element" v-model="scope.row.attribute"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="插入" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.add"></el-checkbox>
+            <el-checkbox :disabled="element" v-model="scope.row.add"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="编辑" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.update"></el-checkbox>
+            <el-checkbox :disabled="element" v-model="scope.row.update"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="列表" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.querylist"></el-checkbox>
+            <el-checkbox :disabled="element" v-model="scope.row.querylist"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="查询" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.query"></el-checkbox>
+            <el-checkbox :disabled="element" v-model="scope.row.query"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="删除" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.delete"></el-checkbox>
+            <el-checkbox :disabled="element" v-model="scope.row.delete"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="查询方式">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.inquirywayvalue" placeholder="请选择">
+            <el-select :disabled="element" v-model="scope.row.inquirywayvalue" placeholder="请选择">
               <el-option
                 v-for="item in inquiryway"
                 :key="item.value"
@@ -69,14 +81,19 @@
         </el-table-column>
         <el-table-column prop="name" label="必填" width="50">
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.required"></el-checkbox>
+            <el-checkbox :disabled="element" v-model="scope.row.required"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="必填规则">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.rule" placeholder="请选择">
+            <el-select :disabled="element" v-model="scope.row.rule" placeholder="请选择">
               <el-option v-for="item in ruleList" :key="item" :label="item" :value="item"></el-option>
             </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="关联表">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="relevance(scope.row,scope.$index)">关联表</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -85,17 +102,22 @@
         <el-button size="small" type="primary" @click="fanhuiClback">返回</el-button>
       </div>
     </div>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
-      <div>
-        <div class="demo-input-suffix">
-          <label for>表名称:</label>
-          <el-input v-model="nameBiao" placeholder="请输入内容"></el-input>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="add">确 定</el-button>
-      </span>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      v-if="dialogVisible"
+      append-to-body
+      width="80%"
+    >
+      <!--    name表明  value表值 -->
+      <div
+        :is="is"
+        :propsName="name"
+        :proComIndex="comIndex"
+        :propsValue="valueMsg"
+        @callback="callbackSuc"
+        :element="true"
+      ></div>
     </el-dialog>
   </div>
 </template>
@@ -105,10 +127,15 @@ export default {
   name: "App",
   data() {
     return {
+      is: "",
+      name: "",
+      valueMsg: "",
+      selectValue: "",
       value: "",
       dialogVisible: false,
-      nameBiao: "",
       inquirywayvalue: "",
+      comIndex: 0,
+      multipleSelection: [],
       ruleList: ["不为空", "手机号", "身份证"],
       inquiryway: [
         {
@@ -137,52 +164,129 @@ export default {
         }
       ],
       tableData: [],
+      tableIndex: "",
       update: ""
     };
   },
   watch: {
-    name() {}
+    selectValue(res) {
+      if (res) {
+        this.generateQuery(res);
+      }
+    },
+    propsTableData(res) {
+      this.tableData = JSON.parse(JSON.stringify(res));
+    }
   },
+  props: ["element", "propsName", "propsValue", "proComIndex"],
   methods: {
+    callbackSuc() {
+      this.dialogVisible = false;
+      this.tableData[this.tableIndex].relevance = JSON.parse(
+        JSON.stringify(this.$root.surfaceRelevance)
+      );
+    },
+    relevance(item, index) {
+      if (!this.element) {
+        this.$root.surfaceRelevance = [];
+        if (item.relevance) {
+          this.$root.surfaceRelevance = item.relevance;
+        }
+      }
+      this.valueMsg = item.Field;
+      this.tableIndex = index;
+      this.is = "TheInterToGnerateJSON";
+      this.dialogVisible = true;
+    },
     add() {
-      this.$http({
-        url: "generate/json",
+      if (this.element) {
+        var elevancePrice = [];
+        this.multipleSelection.filter(s => elevancePrice.push(s.Field));
+        this.$root.surfaceRelevance[this.proComIndex] = {
+          berelevanceName: this.propsName,
+          berelevancePrice: this.propsValue,
+          elevancePrice: elevancePrice,
+          elevanceName: this.name
+        };
+        this.fanhuiClback(true);
+      } else {
+        this.$http({
+          url: "generate/json",
+          method: "post",
+          data: {
+            datalist: this.tableData,
+            name: this.$root.TheInterToGnerateJSON.name
+          }
+        }).then(s => {
+          if (s.status === 200) {
+            this.$router.go(-1);
+            return;
+          }
+        });
+      }
+    },
+    fanhuiClback(blo) {
+      // 返回上一个组件
+      if (this.element) {
+        this.$emit("callback", blo);
+        return;
+      }
+      this.$router.go(-1);
+    },
+    async generateQuery(name) {
+      var generatequery = await this.$http({
+        url: "generate/query",
         method: "post",
         data: {
-          datalist: this.tableData,
-          name: this.$root.TheInterToGnerateJSON.name
+          name: name
         }
-      }).then(s => {
-        if (s.status === 200) {
-          this.$router.go(-1);
-          return;
+      });
+      this.tableData = generatequery.data;
+      this.name = name;
+      this.$nextTick(() => {
+        var item = this.$root.surfaceRelevance[this.proComIndex];
+        if (item) {
+          item.elevancePrice.map(s => {
+            var sv = this.tableData.filter(v => s === v.Field);
+            this.$refs[`multipleTable${this.comIndex}`].toggleRowSelection(
+              sv[0],
+              true
+            );
+          });
         }
       });
     },
-    fanhuiClback() {
-      this.$router.go(-1);
-    },
-    handleSelectionChange() {}
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    }
+  },
+  computed: {
+    selectList() {
+      return this.$root.surfaceList;
+    }
   },
   async created() {
+    if (this.proComIndex !== undefined) {
+      this.comIndex = this.proComIndex + 1;
+    }
     if (!this.$root.TheInterToGnerateJSON) {
       this.$router.go(-1);
       return;
     }
-    // 回显当前
-    var generatequery = await this.$http({
-      url: "generate/query",
-      method:"post",
-      data: {
-        name: this.$root.TheInterToGnerateJSON.name
-      }
-    });
-    this.tableData = generatequery.data
+    var item = this.$root.surfaceRelevance[this.proComIndex];
+    if (item) {
+      this.selectValue = item.elevanceName;
+      return;
+    }
+    if (!this.element) {
+      this.generateQuery(this.$root.TheInterToGnerateJSON.name);
+    }
   }
 };
 </script>
 <style lang="scss">
 .TheInterToGnerateJSON {
+  overflow: hidden;
   .el-input.is-disabled .el-input__inner {
     background: none;
     border: 0;

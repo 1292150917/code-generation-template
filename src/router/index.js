@@ -34,6 +34,14 @@ const routes = [{
 		component: () => import('@/views/databaseCreate')
 	},
 	{
+		path: '/InterfaceView',
+		component: () => import('@/views/InterfaceView')
+	},
+	{
+		path: '/codeAssociated',
+		component: () => import('@/views/codeAssociated')
+	},
+	{
 		path: '/database',
 		component: () => import('@/views/database')
 	},
