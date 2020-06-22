@@ -1,14 +1,11 @@
 <template>
   <div class="TheInterToGnerateJSON">
     <el-form ref="form" label-width="80px" v-if="element">
-      <el-form-item label="活动区域">
+      <el-form-item label="关联表：">
         <el-select size="small" v-model="selectValue" placeholder="请选择活动区域">
-          <el-option
-            :key="index"
-            v-for="(item,index) in selectList"
-            :label="item.name"
-            :value="item.name"
-          ></el-option>
+          <template v-for="(item,index) in selectList">
+            <el-option v-if="propsName !== item.name" :key="index" :label="item.name" :value="item.name"></el-option>
+          </template>
         </el-select>
       </el-form-item>
     </el-form>
@@ -19,9 +16,12 @@
         border
         tooltip-effect="dark"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column type="selection" width="70">
+          <template slot-scope="scope">
+            <el-radio v-model="multipleSelection" :label="scope.row.Field"></el-radio>
+          </template>
+        </el-table-column>
         <el-table-column prop="Field" label="字段名">
           <template slot-scope="scope">
             <el-input :disabled="true" v-model="scope.row.Field"></el-input>
@@ -91,12 +91,13 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="关联表">
+        <el-table-column prop="name" label="关联表" v-if="!element">
           <template slot-scope="scope">
             <el-button size="mini" @click="relevance(scope.row,scope.$index)">关联表</el-button>
           </template>
         </el-table-column>
       </el-table>
+
       <div class="but">
         <el-button size="small" type="primary" @click="add">保存</el-button>
         <el-button size="small" type="primary" @click="fanhuiClback">返回</el-button>
@@ -135,7 +136,7 @@ export default {
       dialogVisible: false,
       inquirywayvalue: "",
       comIndex: 0,
-      multipleSelection: [],
+      multipleSelection: "",
       ruleList: ["不为空", "手机号", "身份证"],
       inquiryway: [
         {
@@ -200,12 +201,10 @@ export default {
     },
     add() {
       if (this.element) {
-        var elevancePrice = [];
-        this.multipleSelection.filter(s => elevancePrice.push(s.Field));
         this.$root.surfaceRelevance[this.proComIndex] = {
           berelevanceName: this.propsName,
           berelevancePrice: this.propsValue,
-          elevancePrice: elevancePrice,
+          elevancePrice: this.multipleSelection,
           elevanceName: this.name
         };
         this.fanhuiClback(true);
@@ -246,18 +245,9 @@ export default {
       this.$nextTick(() => {
         var item = this.$root.surfaceRelevance[this.proComIndex];
         if (item) {
-          item.elevancePrice.map(s => {
-            var sv = this.tableData.filter(v => s === v.Field);
-            this.$refs[`multipleTable${this.comIndex}`].toggleRowSelection(
-              sv[0],
-              true
-            );
-          });
+          this.multipleSelection = item.elevancePrice;
         }
       });
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
     }
   },
   computed: {
@@ -290,6 +280,11 @@ export default {
   .el-input.is-disabled .el-input__inner {
     background: none;
     border: 0;
+  }
+  .TheInterToGnerateJSON-main {
+    .el-radio__label {
+      display: none;
+    }
   }
 }
 </style>

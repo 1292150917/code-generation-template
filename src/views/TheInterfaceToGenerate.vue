@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-21 18:12:12
+ * @LastEditTime: 2020-06-22 21:18:04
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue

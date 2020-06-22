@@ -1,5 +1,14 @@
 <template>
   <div class="about">
+    
+    <p style="
+    color: #8066d6;
+    font-size: 13px;
+    margin-bottom: 12px;">虽然内置的数据库基本操作，但是强烈不推荐网页直接对数据进行操作（因为待完成）。您可以去NavicatPremium等可视化软件上面修改 <br>
+    注意：修改了数据结构以后请重新点击《数据库同步模型》按钮，来同步数据库</p>
+   <el-button  type="danger" size="small" style="
+    margin-left: 13px;
+    margin-top: 7px;" class="addxinz" @click="SynchronousModel">数据库同步模型</el-button>
     <div class="constructionedit-left">
       <el-button type="primary" size="small" class="addxinz" @click="dialogVisible = true">新增</el-button>
       <el-button type="primary" size="small" class="addxinz" @click="tableUpdate()">编辑</el-button>
@@ -48,7 +57,7 @@
         </el-table-column>
         <el-table-column prop="name" label="长度">
           <template slot-scope="scope">
-            <el-input :disabled="disabledMetd(scope.row)" v-model="scope.row.length"></el-input>
+            <el-input :disabled="disabledMetd(scope.row)" placeholder="请输入内容" v-model="scope.row.length"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="不是null" width="50">
@@ -185,6 +194,9 @@ export default {
         return false;
       }
     },
+    SynchronousModel(){
+      this.$alert('作者比较懒预计：2020/6/23更新完成此操作，现在您可以尝试手动同步文件，文件夹《<DaveFile/watch.json>》修改成空JSON “{}”')
+    },
     disabledExtra(item) {
       if (this.disabledMetd(item)) {
         return true;
@@ -291,6 +303,10 @@ export default {
       }
       var httpData = await this.$http({ url: "alter/update", data: data });
       if (httpData.status === 200) {
+        this.$message({
+          message: "修改成功",
+          type: "success"
+        });
         this.tables();
       }
     },
@@ -354,6 +370,10 @@ export default {
           s.Extra = false;
         }
         s.surface = this.name;
+        if(s.Type.includes('decimal')){
+          console.log(s)
+          return
+        }
         s.length = s.Type.match(/\((.+?)\)/)
           ? s.Type.match(/\((.+?)\)/)[1]
           : "";
