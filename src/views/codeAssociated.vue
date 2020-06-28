@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-21 16:47:59
+ * @LastEditTime: 2020-06-28 22:44:49
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -50,6 +50,7 @@ export default {
         method: "post"
       }).then(s => {
         if (s.status === 200) {
+          this.$alert('已确定代码目录，您可以尝试使用高级用法的其他功能。')
           console.log(s);
         }
       });
