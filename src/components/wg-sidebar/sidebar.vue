@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-03 21:25:25
- * @LastEditTime: 2020-06-21 17:34:50
+ * @LastEditTime: 2020-06-30 22:28:50
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\app\src\views\Home.vue
@@ -58,7 +58,7 @@
             <el-menu-item index="3-3" @click="routerLink('InterfaceView','接口查看','3-3')">接口查看</el-menu-item>
             <!-- <el-menu-item index="3-4">路由配置</el-menu-item> -->
             <!-- <el-menu-item index="3-5" @click="dowcumentApi">文档说明</el-menu-item>
-            <el-menu-item index="3-6">其他操作</el-menu-item> -->
+            <el-menu-item index="3-6">其他操作</el-menu-item>-->
           </el-menu-item-group>
         </el-submenu>
         <el-menu-item index="4" disabled>
@@ -73,6 +73,7 @@
           <i class="el-icon-setting"></i>
           <span slot="title">操作监控</span>
         </el-menu-item>
+         <!-- @click="routerLink('appletOfWeChat','接口查看','3-3')" -->
         <el-menu-item index="6" disabled>
           <i class="el-icon-document"></i>
           <span slot="title">微信小程序专区</span>
@@ -133,7 +134,8 @@ export default {
   },
   methods: {
     dowcumentApi() {
-      var URL = "file:///C:/Users/zhamgzifang/Desktop/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/public/apidoc/index.html";
+      var URL =
+        "file:///C:/Users/zhamgzifang/Desktop/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/public/apidoc/index.html";
       window.open(URL, null);
     },
     handleOpen(key, keyPath) {

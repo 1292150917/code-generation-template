@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-11 22:26:40
+ * @LastEditTime: 2020-06-29 22:37:19
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\router\index.js
@@ -48,6 +48,10 @@ const routes = [{
 	{
 		path: '/constructionedit',
 		component: () => import('@/views/constructionedit')
+	},
+	{
+		path: '/appletOfWeChat',
+		component: () => import('@/views/appletOfWeChat')
 	},
 	{
 		path: '/TheInterToGnerateJSON',

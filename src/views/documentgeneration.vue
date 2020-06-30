@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-20 17:25:08
+ * @LastEditTime: 2020-06-30 23:09:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -29,6 +29,7 @@
       </el-table-column>
       <el-table-column prop="name" label="表名称" width="120"></el-table-column>
       <el-table-column prop="msg.TABLE_COMMENT" label="表描述" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="tableinterface.name" label="接口名字" show-overflow-tooltip></el-table-column>
       <!-- <el-table-column prop="address" label="实体" show-overflow-tooltip></el-table-column> -->
       <el-table-column prop="msg.CREATE_TIME" label="创建时间"></el-table-column>
       <el-table-column prop="msg.UPDATE_TIME" label="更新时间"></el-table-column>

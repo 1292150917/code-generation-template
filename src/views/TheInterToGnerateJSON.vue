@@ -4,12 +4,25 @@
       <el-form-item label="关联表：">
         <el-select size="small" v-model="selectValue" placeholder="请选择活动区域">
           <template v-for="(item,index) in selectList">
-            <el-option v-if="propsName !== item.name" :key="index" :label="item.name" :value="item.name"></el-option>
+            <el-option
+              v-if="propsName !== item.name"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
           </template>
         </el-select>
       </el-form-item>
     </el-form>
     <div class="TheInterToGnerateJSON-main">
+      <el-input
+        v-if="!element"
+        placeholder="请输入接口名字/默认为表描述"
+        style="margin-bottom:10px"
+        v-model="tabledescribes"
+      >
+        <template slot="prepend">接口名字</template>
+      </el-input>
       <el-table
         :ref="'multipleTable' + comIndex"
         :data="tableData"
@@ -137,6 +150,7 @@ export default {
       inquirywayvalue: "",
       comIndex: 0,
       multipleSelection: "",
+      tabledescribes: "",
       ruleList: ["不为空", "手机号", "身份证"],
       inquiryway: [
         {
@@ -213,6 +227,7 @@ export default {
           url: "generate/json",
           method: "post",
           data: {
+            tabledescribes: this.tabledescribes,
             datalist: this.tableData,
             name: this.$root.TheInterToGnerateJSON.name
           }
@@ -270,6 +285,10 @@ export default {
     }
     if (!this.element) {
       this.generateQuery(this.$root.TheInterToGnerateJSON.name);
+    }
+    // 接口名字
+    if (this.$root.TheInterToGnerateJSON.tableinterface) {
+      this.tabledescribes = this.$root.TheInterToGnerateJSON.tableinterface.name;
     }
   }
 };
