@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-30 23:14:12
+ * @LastEditTime: 2020-07-14 22:41:43
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -10,11 +10,30 @@
   <div class="about">
     <el-button size="small" type="primary" @click="generateCreate(true)">生成可部署项目</el-button>
     <el-button size="small" type="primary" @click="generateCreate">生成选中局部代码</el-button>
+    <el-button
+      type="danger"
+      size="small"
+      style="
+    margin-left: 13px;
+    margin-top: 7px;"
+      class="addxinz"
+      @click="SynchronousModel"
+    >数据库同步模型</el-button>
     <div class="ORMSELECT">
       选择ORM：
       <el-select size="small" v-model="ormvalue" placeholder="请选择">
         <el-option v-for="item in ORMlist" :key="item" :label="item" :value="item"></el-option>
       </el-select>
+    </div>
+    <div class="search">
+      搜索接口：
+      <el-input
+        size="small"
+        @change="changeValue"
+        v-model="sousuo"
+        placeholder="输入完成请敲回车进行搜索"
+        style="width:50%;margin-left: 11px;"
+      ></el-input>
     </div>
     <el-table
       ref="multipleTable"
@@ -98,12 +117,14 @@ export default {
       ormvalue: "sequelize",
       previewhtml: false,
       tagIndex: "",
+      sousuo: "",
       ORMlist: ["sequelize"],
       value: "",
       dialogVisible: false,
       describe: "",
       input: "",
       name: "",
+      resDate: [],
       update: true,
       multipleSelection: [],
       tableData: []
@@ -118,6 +139,20 @@ export default {
     }
   },
   methods: {
+    async SynchronousModel() {
+      await this.$http({
+        url: "tables/surface",
+        data: {
+          update: true
+        }
+      });
+      this.$alert("已经成功将数据库数据同步到模型中", "提示", {
+        confirmButtonText: "确定",
+        callback: () => {
+          location.reload();
+        }
+      });
+    },
     async handleClick(_, item) {
       this.$http({
         url: "generate/create",
@@ -136,31 +171,17 @@ export default {
         saveAs(s, item.name);
       });
     },
-    generateCreate(deploy) {
+    changeValue() {
+      if (!this.sousuo) {
+        this.tableData = this.resDate;
+        return;
+      }
+      this.tableData = this.resDate.filter(s => s.name.includes(this.sousuo));
+    },
+    generateCreate() {
       var name = [];
       this.multipleSelection.forEach(s => {
         name.push(s.name);
-      });
-      this.$http({
-        url: "generate/create",
-        method: "post",
-        data: {
-          name: name,
-          ORM: this.ormvalue,
-          download: true,
-          deploy
-        }
-      }).then(async res => {
-        var zip = new JSZip();
-        for (var index in res.msg) {
-          zip.file(res.msg[index].name, res.msg[index].msg);
-          var s = await zip.generateAsync({ type: "blob" });
-        }
-        if (name.length === 1) {
-          saveAs(s, name[0].name);
-        } else {
-          saveAs(s, "Dave_download");
-        }
       });
     },
     handleSelectionChange(val) {
@@ -228,8 +249,9 @@ export default {
         }
         return s;
       });
-      this.tableData = list.data;
-      this.$root.surfaceList = this.tableData
+      this.resDate = list.data;
+      this.tableData = this.resDate;
+      this.$root.surfaceList = this.tableData;
     }
   },
   async created() {
@@ -264,6 +286,10 @@ export default {
 <style lang="scss" scoped="scoped">
 .previewhtml {
   height: 100%;
+}
+.search {
+  font-size: 15px;
+  color: #999;
 }
 .previewhtml-tag {
   border-bottom: 1px solid #eee;
