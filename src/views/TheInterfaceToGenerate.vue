@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-07-14 22:41:43
+ * @LastEditTime: 2020-07-22 22:07:20
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
@@ -35,6 +35,45 @@
         style="width:50%;margin-left: 11px;"
       ></el-input>
     </div>
+    <el-collapse style="margin-top: 13px;" v-model="activeName" accordion>
+      <el-collapse-item title="接口通用信息设置" name="1">
+        <div style="margin-bottom:10px;">此数据会通用与所有接口</div>
+        <div style="line-height: 54px;">
+          <div class="tonyon_list">
+            伪删除字段：
+            <el-input size="small" v-model="fakef" placeholder style="width:50%;margin-left: 11px;"></el-input>
+          </div>
+          <div class="tonyon_list">
+            伪删除默认值：
+            <el-input
+              size="small"
+              v-model="fakefValue"
+              placeholder
+              style="width:50%;margin-left: 11px;"
+            ></el-input>
+          </div>
+          <div class="tonyon_list">
+            数据创建时间字段：
+            <el-input
+              size="small"
+              v-model="creationTime"
+              placeholder
+              style="width:50%;margin-left: 11px;"
+            ></el-input>
+          </div>
+          <div class="tonyon_list">
+            数据更新时间字段：
+            <el-input
+              size="small"
+              v-model="updateTime"
+              placeholder
+              style="width:50%;margin-left: 11px;"
+            ></el-input>
+          </div>
+          <el-button size="mini" type="primary" class="gogeneral" @click="fakeGo()">保存</el-button>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -119,15 +158,20 @@ export default {
       tagIndex: "",
       sousuo: "",
       ORMlist: ["sequelize"],
+      activeName: "",
       value: "",
       dialogVisible: false,
       describe: "",
+      fakef: "",
+      fakefValue: "",
+      creationTime: "",
+      updateTime: "",
       input: "",
       name: "",
       resDate: [],
       update: true,
       multipleSelection: [],
-      tableData: []
+      tableData: [],
     };
   },
   watch: {
@@ -136,21 +180,33 @@ export default {
         var pre = document.querySelector(".previewhtml-main");
         hljs.highlightBlock(pre);
       });
-    }
+    },
   },
   methods: {
+    fakeGo() {
+      var { fakef, fakefValue, creationTime, updateTime } = this;
+      this.$http({
+        url: "api/generalSettings",
+        data: {
+          fakef,
+          fakefValue,
+          creationTime,
+          updateTime,
+        },
+      });
+    },
     async SynchronousModel() {
       await this.$http({
         url: "tables/surface",
         data: {
-          update: true
-        }
+          update: true,
+        },
       });
       this.$alert("已经成功将数据库数据同步到模型中", "提示", {
         confirmButtonText: "确定",
         callback: () => {
           location.reload();
-        }
+        },
       });
     },
     async handleClick(_, item) {
@@ -160,9 +216,9 @@ export default {
         data: {
           name: [item.name],
           ORM: this.ormvalue,
-          download: true
-        }
-      }).then(async res => {
+          download: true,
+        },
+      }).then(async (res) => {
         var zip = new JSZip();
         for (var index in res.msg) {
           zip.file(res.msg[index].name, res.msg[index].msg);
@@ -176,11 +232,11 @@ export default {
         this.tableData = this.resDate;
         return;
       }
-      this.tableData = this.resDate.filter(s => s.name.includes(this.sousuo));
+      this.tableData = this.resDate.filter((s) => s.name.includes(this.sousuo));
     },
     generateCreate() {
       var name = [];
-      this.multipleSelection.forEach(s => {
+      this.multipleSelection.forEach((s) => {
         name.push(s.name);
       });
     },
@@ -201,11 +257,11 @@ export default {
       if (this.update) {
         var dataV = {
           name: this.name,
-          yuanName: this.update.name
+          yuanName: this.update.name,
         };
         var httpDatas = await this.$http({
           url: "tables/update",
-          data: dataV
+          data: dataV,
         });
         if (httpDatas.status === 200) {
           this.table();
@@ -215,7 +271,7 @@ export default {
       }
       var data = {
         describe: this.describe,
-        name: this.name
+        name: this.name,
       };
       var httpData = await this.$http({ url: "tables/add", data: data });
       if (httpData.status === 200) {
@@ -229,9 +285,9 @@ export default {
         method: "post",
         data: {
           name: [item.name],
-          ORM: this.ormvalue
-        }
-      }).then(s => {
+          ORM: this.ormvalue,
+        },
+      }).then((s) => {
         if (s.status === 200) {
           this.createList = s.msg;
           this.tagIndex = 0;
@@ -241,7 +297,7 @@ export default {
     },
     async table() {
       var list = await this.$http({ url: "tables/surface", data: {} });
-      list.data.filter(s => {
+      list.data.filter((s) => {
         if (s.msg.TABLE_COMMENT.split(";").length >= 2) {
           s.msg.TABLE_COMMENT = s.msg.TABLE_COMMENT.split(";")[0];
         } else {
@@ -252,11 +308,11 @@ export default {
       this.resDate = list.data;
       this.tableData = this.resDate;
       this.$root.surfaceList = this.tableData;
-    }
+    },
   },
   async created() {
     this.table();
-  }
+  },
 };
 </script>
 <style lang="scss">
@@ -286,6 +342,16 @@ export default {
 <style lang="scss" scoped="scoped">
 .previewhtml {
   height: 100%;
+}
+.gogeneral {
+  float: right;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  margin-right: 49px;
+}
+.tonyon_list {
+  width: 33.3%;
+  display: inline-block;
 }
 .search {
   font-size: 15px;

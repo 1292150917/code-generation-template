@@ -16,6 +16,17 @@
     <el-tooltip class="item" effect="dark" content="下载完成后请解压到代码public/apidoc/代码下" placement="top-start">
       <el-button size="small" type="primary" @click="generateCreate">生成选中文档</el-button>
     </el-tooltip>
+    
+    <div class="search">
+      搜索表名：
+      <el-input
+        size="small"
+        @change="changeValue"
+        v-model="sousuo"
+        placeholder="输入完成请敲回车进行搜索"
+        style="width:50%;margin-left: 11px;"
+      ></el-input>
+    </div>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -91,6 +102,7 @@ export default {
   data() {
     return {
       createList: [],
+      sousuo:"",
       previewhtml: false,
       tagIndex: "",
       ORMlist: ["sequelize"],
@@ -100,6 +112,7 @@ export default {
       input: "",
       name: "",
       update: true,
+      resDate: [],
       multipleSelection: [],
       tableData: []
     };
@@ -113,6 +126,13 @@ export default {
     }
   },
   methods: {
+    changeValue() {
+      if (!this.sousuo) {
+        this.tableData = this.resDate;
+        return;
+      }
+      this.tableData = this.resDate.filter(s => s.name.includes(this.sousuo));
+    },
     generateCreate() {
       var name = [];
       this.multipleSelection.forEach(s => {
@@ -189,7 +209,8 @@ export default {
         }
         return s;
       });
-      this.tableData = list.data;
+      this.resDate = list.data
+      this.tableData = this.resDate
     }
   },
   async created() {
