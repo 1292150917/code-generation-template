@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-06-10 22:03:56
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-08-06 17:00:30
+ * @LastEditors: zhang zi fang
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\database.vue
 --> 
@@ -21,7 +21,7 @@
     </div>
     <div class="database-right">
       <el-button style="margin-bottom:20px" @click="addClick()">新增数据</el-button>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table  v-loading="loading" :data="tableData" border style="width: 100%">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column :key="index" v-for="(item,index) in tableColumn" :label="item.Field">
           <template slot-scope="scope">
@@ -73,6 +73,7 @@ export default {
       tableColumn: [],
       tableData: [],
       update: false,
+      loading:false,
       itemList: [],
       name: ""
     };
@@ -153,9 +154,11 @@ export default {
   },
   async created() {
     // 获取所有的表
+    this.loading = true
     var tables = await this.$http({ url: "tables", data: {} });
     this.tables = tables.data;
     await this.tablesSurface();
+    this.loading = false
     this.tagIndex = 0;
   }
 };

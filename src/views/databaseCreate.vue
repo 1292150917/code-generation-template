@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-09 19:38:15
- * @LastEditTime: 2020-06-17 23:20:51
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-08-06 16:56:53
+ * @LastEditors: zhang zi fang
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\databaseCreate.vue
 --> 
@@ -33,6 +33,9 @@
       <el-button @click="cretedSubmit">创建并连接库</el-button>
       <el-button>取消</el-button>
     </el-form-item>
+    <p>请根据需求使用：</p>
+    <p>链接库：您现在有数据库，并且尝试进行链接</p>
+    <p>创建并连接库：没有这个数据库，我会先创建一个数据库在进行链接</p>
   </el-form>
 </template>
 <script>

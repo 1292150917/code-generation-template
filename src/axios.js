@@ -3,8 +3,8 @@
  * @version: 
  * @Author: 
  * @Date: 2019-11-27 14:35:11
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-06-07 16:24:20
+ * @LastEditors: zhang zi fang
+ * @LastEditTime: 2020-08-06 16:53:06
  */
 import axios from "axios";
 const host = '/'
@@ -32,8 +32,8 @@ function $http({ url, data, method = 'get', success }) {
                 'Content-Type': 'application/json'
             }
         }).then((response) => {
-            if (response.data.status !== 200 && response.data.status != 999 && url !=='patientpayment/' && url!=='queryrefundamount/') {
-                this.$alert(`${response.data.msg}`, '警告',{
+            if (response.data.status !== 200 && response.data.status != 999 && url !== 'patientpayment/' && url !== 'queryrefundamount/') {
+                this.$alert(`${response.data.msg}`, '警告', {
                     type: 'warning'
                 })
             }
@@ -41,9 +41,9 @@ function $http({ url, data, method = 'get', success }) {
                 this.$alert(`服务器异常！错误代码(${url})`)
             }
             resolve(response.data)
-          if(success){
-            success(response.data)
-          }
+            if (success) {
+                success(response.data)
+            }
             // 成功回调函数
 
         }).catch((error) => {

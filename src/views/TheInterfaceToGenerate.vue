@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-04 18:31:33
- * @LastEditTime: 2020-07-22 22:07:20
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-08-06 17:23:39
+ * @LastEditors: zhang zi fang
  * @Description: In User Settings Edit
  * @FilePath: \nodec:\Users\zhamgzifang\Desktop\code-generation-template\src\views\construction.vue
 --> 
@@ -53,6 +53,15 @@
             ></el-input>
           </div>
           <div class="tonyon_list">
+            删除成为的值：
+            <el-input
+              size="small"
+              v-model="deleteValue"
+              placeholder
+              style="width:50%;margin-left: 11px;"
+            ></el-input>
+          </div>
+          <div class="tonyon_list">
             数据创建时间字段：
             <el-input
               size="small"
@@ -75,6 +84,7 @@
       </el-collapse-item>
     </el-collapse>
     <el-table
+      v-loading="loading"
       ref="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
@@ -159,6 +169,8 @@ export default {
       sousuo: "",
       ORMlist: ["sequelize"],
       activeName: "",
+      loading: false,
+      deleteValue: "",
       value: "",
       dialogVisible: false,
       describe: "",
@@ -184,15 +196,21 @@ export default {
   },
   methods: {
     fakeGo() {
-      var { fakef, fakefValue, creationTime, updateTime } = this;
+      var { fakef, fakefValue, creationTime, updateTime, deleteValue } = this;
       this.$http({
         url: "api/generalSettings",
         data: {
           fakef,
           fakefValue,
           creationTime,
+          deleteValue,
           updateTime,
         },
+      }).then(()=>{
+        this.$message({
+          message: '默认值 保存成功',
+          type: 'success'
+        });
       });
     },
     async SynchronousModel() {
@@ -205,7 +223,8 @@ export default {
       this.$alert("已经成功将数据库数据同步到模型中", "提示", {
         confirmButtonText: "确定",
         callback: () => {
-          location.reload();
+          // location.reload();
+          this.table();
         },
       });
     },
@@ -234,10 +253,31 @@ export default {
       }
       this.tableData = this.resDate.filter((s) => s.name.includes(this.sousuo));
     },
-    generateCreate() {
+    generateCreate(deploy) {
       var name = [];
       this.multipleSelection.forEach((s) => {
         name.push(s.name);
+      });
+      this.$http({
+        url: "generate/create",
+        method: "post",
+        data: {
+          name: name,
+          ORM: this.ormvalue,
+          download: true,
+          deploy
+        }
+      }).then(async res => {
+        var zip = new JSZip();
+        for (var index in res.msg) {
+          zip.file(res.msg[index].name, res.msg[index].msg);
+          var s = await zip.generateAsync({ type: "blob" });
+        }
+        if (name.length === 1) {
+          saveAs(s, name[0].name);
+        } else {
+          saveAs(s, "Dave_download");
+        }
       });
     },
     handleSelectionChange(val) {
@@ -308,10 +348,24 @@ export default {
       this.resDate = list.data;
       this.tableData = this.resDate;
       this.$root.surfaceList = this.tableData;
+      this.loading = false;
     },
   },
   async created() {
+    this.loading = true;
     this.table();
+    // 获取默认数据
+    this.$http({
+      url: "api/generalSettings",
+      data: {
+        type: "query",
+      },
+      success: (res) => {
+        Object.keys(res.data).map((s) => {
+          this[s] = res.data[s];
+        });
+      },
+    });
   },
 };
 </script>

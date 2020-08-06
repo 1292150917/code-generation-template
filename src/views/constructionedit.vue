@@ -35,6 +35,7 @@
       <el-table
         ref="multipleTable"
         :data="tableData"
+        v-loading="loading"
         border
         tooltip-effect="dark"
         style="width: 100%"
@@ -142,6 +143,7 @@ export default {
   name: "App",
   data() {
     return {
+      loading:false,
       value: "",
       dialogVisible: false,
       PhysicalTypevalue: "",
@@ -365,8 +367,10 @@ export default {
       //   this.$router.push({ path: "/constructionedit" });
     },
     async tablesSurface() {
+      this.loading = true
       var list = await this.$http({ url: "tables/surface", data: {} });
       this.surfaceList = list.data;
+      this.loading = false
       if (this.surfaceList[0]) {
         this.name = this.surfaceList[0].name;
       }
